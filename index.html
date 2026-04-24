@@ -18,68 +18,51 @@
         }
 
         body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: var(--main-bg); color: var(--text-black); }
-       
         header { padding: 10px 20px; border-bottom: 1px solid var(--border-light); }
         .journal-name { font-size: 32px; font-weight: bold; text-align: center; text-transform: uppercase; margin-bottom: 5px; }
-       
+        
         .top-bar { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid var(--border-light); padding: 5px 20px; background: #f9f9f9; }
-        .auth-status span { cursor: pointer; text-decoration: underline; }
+        .auth-status span { cursor: pointer; text-decoration: underline; color: blue; }
 
         nav { display: flex; align-items: center; padding: 0 20px; background: #fff; border-bottom: 2px solid #000; position: sticky; top: 0; z-index: 1000; }
         .nav-list { display: flex; list-style: none; margin: 0; padding: 0; }
         .nav-item { position: relative; padding: 15px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
         .nav-item:hover { background: #f0f0f0; }
-        .dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #000; min-width: 180px; }
-        .nav-item:hover .dropdown { display: block; }
-        .dropdown-item { padding: 10px; border-bottom: 1px solid #eee; text-transform: none; font-weight: normal; }
-        .dropdown-item:hover { background: #f9f9f9; }
-       
-        .admin-tools-btn { color: var(--accent-red); border-left: 1px solid var(--border-light); }
+        
+        .admin-tools-btn { color: var(--accent-red); border-left: 1px solid var(--border-light); display: none; }
 
         .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 20px; }
         .main-content { flex: 3; }
         .sidebar { flex: 1; }
 
-        .back-btn { cursor: pointer; display: none; margin-bottom: 15px; font-size: 20px; }
-
+        /* Artykuły na głównej */
         .article-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-light); cursor: pointer; }
-        .article-card .info { flex: 2; }
         .article-card .cat { color: var(--accent-red); font-weight: bold; font-size: 12px; text-transform: uppercase; }
-        .article-card h2 { margin: 5px 0; font-size: 24px; }
+        .article-card h2 { margin: 5px 0; font-size: 24px; color: #000; }
         .article-card p { color: var(--text-gray); margin: 0; font-size: 16px; }
         .article-card .thumb { width: 150px; height: 100px; object-fit: cover; background: #eee; }
 
-        .full-article h1 { font-size: 36px; margin-bottom: 10px; }
-        .full-article .meta { color: var(--text-gray); font-size: 14px; margin-bottom: 20px; }
-        .article-body { line-height: 1.6; border-top: 1px solid #eee; padding-top: 20px; }
-        .article-img { max-width: 100%; margin: 15px 0; display: block; }
-
-        .ekstraklasa-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
-        .ekstraklasa-table th { background: #000; color: #fff; padding: 5px; }
-        .ekstraklasa-table td { border-bottom: 1px solid #ddd; padding: 5px; }
-        .relegation { background: #ffe6e6; }
-        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin: 0 1px; }
-        .win { background: green; } .loss { background: red; } .draw { background: gray; }
-
+        /* Modal Logowania/Rejestracji */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
-        .modal-content { background: #fff; width: 350px; margin: 10% auto; padding: 30px; border-radius: 5px; }
-        .modal-content input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        .modal-content button { width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
-        .modal-footer { margin-top: 15px; font-size: 12px; text-align: center; }
+        .modal-content { background: #fff; width: 320px; margin: 15% auto; padding: 25px; border-radius: 8px; text-align: center; }
+        .modal-content h2 { margin-top: 0; }
+        .modal-content input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; box-sizing: border-box; }
+        .modal-content button { width: 100%; padding: 12px; background: #000; color: #fff; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .modal-footer { margin-top: 15px; font-size: 13px; }
+        .modal-footer span { color: blue; cursor: pointer; text-decoration: underline; }
 
-        .admin-panel { display: none; }
-        .admin-nav { display: flex; border-bottom: 1px solid #000; margin-bottom: 20px; }
-        .admin-nav-item { padding: 10px 15px; cursor: pointer; border: 1px solid transparent; }
-        .admin-nav-item.active { border: 1px solid #000; border-bottom: none; background: #eee; }
+        /* Panel Admina */
+        .admin-panel { display: none; background: #fff; padding: 20px; border: 1px solid #000; }
+        .admin-nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        .admin-nav-item { cursor: pointer; padding: 5px 10px; background: #eee; border-radius: 3px; font-size: 12px; }
+        .admin-nav-item.active { background: #000; color: #fff; }
 
-        .editor-section { border: 1px solid #ddd; padding: 20px; margin-bottom: 10px; }
-        .block-controls { display: flex; gap: 10px; margin: 10px 0; padding: 10px; background: #f0f0f0; }
-        .content-block { margin-bottom: 15px; border: 1px dashed #ccc; padding: 10px; position: relative; }
-        .text-block-area { width: 100%; min-height: 100px; margin-top: 5px; }
-        .toolbar { display: flex; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
-        .toolbar button, .toolbar select { font-size: 11px; padding: 2px 5px; }
+        .editor-section input, .editor-section select { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
+        .block-controls { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .text-area { width: 100%; min-height: 100px; border: 1px solid #ccc; padding: 10px; margin-top: 5px; }
 
-        .rank-admin { border: 1px solid var(--admin-yellow); padding: 2px 5px; font-weight: bold; font-size: 10px; }
+        .banner-box { width: 100%; height: 250px; background: #eee; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px; }
+        .banner-box img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -87,9 +70,9 @@
 <header>
     <div class="journal-name">Dziennik Nowoczesny</div>
     <div class="top-bar">
-        <div id="datetime"></div>
+        <div id="datetime">--.--.---- | --:--:--</div>
         <div class="auth-status" id="authBox">
-            Gość | <span onclick="openAuthModal('login')">Zaloguj się</span>
+            Gość | <span onclick="toggleModal('login')">Zaloguj się</span>
         </div>
     </div>
 </header>
@@ -97,6 +80,7 @@
 <nav>
     <ul class="nav-list" id="mainNav">
         <li class="nav-item" onclick="showView('home')">Strona Główna</li>
+        <li class="nav-item admin-tools-btn" id="adminLink" onclick="showView('admin')">🔧 NARZĘDZIA EDYCJI</li>
     </ul>
 </nav>
 
@@ -105,49 +89,62 @@
         <div id="homeView">
             <div id="articlesList"></div>
         </div>
-       
-        <div id="articleView" class="full-article">
-            <span class="back-btn" onclick="showView('home')">← Wróć</span>
-            <div id="articleContent"></div>
-        </div>
 
         <div id="adminView" class="admin-panel">
+            <button onclick="showView('home')" style="margin-bottom:15px;">← Wróć</button>
             <div class="admin-nav">
-                <div class="admin-nav-item active" onclick="switchAdminTab('art')">Edycja Artykułów</div>
-                <div class="admin-nav-item" onclick="switchAdminTab('tab')">Tabela Ekstraklasy</div>
-                <div class="admin-nav-item" onclick="switchAdminTab('rang')">Nadaj rangę</div>
-                <div class="admin-nav-item" onclick="switchAdminTab('stats')">Statystyki</div>
-                <div class="admin-nav-item" onclick="switchAdminTab('other')">Inne</div>
+                <div class="admin-nav-item active" onclick="switchTab('art')">Edycja Artykułów</div>
+                <div class="admin-nav-item" onclick="switchTab('tab')">Tabela Ekstraklasy</div>
+                <div class="admin-nav-item" onclick="switchTab('rang')">Nadaj rangę</div>
+                <div class="admin-nav-item" onclick="switchTab('stats')">Statystyki</div>
+                <div class="admin-nav-item" onclick="switchTab('other')">Inne</div>
             </div>
-           
-            <div id="adminTabContent"></div>
+            <div id="adminContent">
+                <div class="editor-section">
+                    <input type="text" id="artTitle" placeholder="Tytuł artykułu (Największy)">
+                    <input type="text" id="artSub" placeholder="Podtytuł (Szary)">
+                    <input type="text" id="artMini" placeholder="Link do miniaturki (z prawej)">
+                    <div id="editorBlocks"></div>
+                    <div class="block-controls">
+                        <button onclick="addBlock('text')">+ Dodaj Tekst</button>
+                        <button onclick="addBlock('img')">+ Dodaj Zdjęcie</button>
+                    </div>
+                    <button onclick="publishArticle()" style="background:green; color:white; padding:15px; border:none; width:100%; cursor:pointer;">OPUBLIKUJ</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="sidebar" id="sidebar">
-        <h3>Tabela Ekstraklasy</h3>
-        <div id="miniTable"></div>
-    </div>
+    <aside class="sidebar">
+        <div class="banner-box" id="sidebarBanner">
+            <span>REKLAMA / BANER</span>
+        </div>
+        <div id="leagueTableSide">
+            </div>
+    </aside>
 </div>
 
 <div id="authModal" class="modal">
     <div class="modal-content">
         <h2 id="modalTitle">Logowanie</h2>
-        <input type="text" id="authLogin" placeholder="Nazwa użytkownika (Login)">
-        <input type="password" id="authPass" placeholder="Hasło">
-        <button id="authBtn">Zaloguj</button>
-        <div class="modal-footer" id="modalToggle"></div>
+        <input type="text" id="uLogin" placeholder="Nazwa użytkownika">
+        <input type="password" id="uPass" placeholder="Hasło">
+        <button id="mainAuthBtn" onclick="handleAuth()">Wejdź</button>
+        <div class="modal-footer" id="modalSwitchArea">
+            Nie masz konta? <span onclick="toggleModal('reg')">Zarejestruj się</span>
+        </div>
     </div>
 </div>
 
 <script>
+    // --- KONFIGURACJA FIREBASE ---
     const firebaseConfig = {
         apiKey: "TWOJE_API_KEY",
-        authDomain: "grapanstwamiasta.firebaseapp.com",
-        databaseURL: "https://grapanstwamiasta-default-rtdb.firebaseio.com",
-        projectId: "grapanstwamiasta",
-        storageBucket: "grapanstwamiasta.appspot.com",
-        messagingSenderId: "SENDER_ID",
+        authDomain: "TWOJA_DOMENA.firebaseapp.com",
+        databaseURL: "TWOJA_ADRES_BAZY.firebaseio.com",
+        projectId: "TWOJE_ID",
+        storageBucket: "TWOJE_BUCKET",
+        messagingSenderId: "ID",
         appId: "APP_ID"
     };
 
@@ -155,303 +152,119 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    let currentUser = null;
-    let userData = null;
-    let articles = [];
-    let categories = { "Sport": ["Piłka Nożna", "Tenis", "Szachy"], "Polityka": ["Krajowa", "Zagraniczna"] };
+    let currentMode = 'login';
+    let userRole = 'guest';
 
-    function updateDateTime() {
+    // --- ZEGAR ---
+    setInterval(() => {
         const now = new Date();
         document.getElementById('datetime').innerText = now.toLocaleString('pl-PL');
-    }
-    setInterval(updateDateTime, 1000);
+    }, 1000);
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            db.ref('users/' + user.uid).once('value', s => {
-                userData = s.val();
-                renderUI();
-            });
-        } else {
-            currentUser = null;
-            userData = null;
-            renderUI();
-        }
-    });
-
-    function renderUI() {
-        const authBox = document.getElementById('authBox');
-        const nav = document.getElementById('mainNav');
-       
-        if (currentUser && userData) {
-            authBox.innerHTML = `${userData.username} | <span onclick="auth.signOut()">Wyloguj się</span>`;
-            if (userData.role === 'admin' || userData.role === 'mod') {
-                if (!document.getElementById('adminBtn')) {
-                    const li = document.createElement('li');
-                    li.id = 'adminBtn';
-                    li.className = 'nav-item admin-tools-btn';
-                    li.innerHTML = '🔧 Narzędzia edycji';
-                    li.onclick = () => showView('admin');
-                    nav.appendChild(li);
-                }
-            }
-        } else {
-            authBox.innerHTML = `Gość | <span onclick="openAuthModal('login')">Zaloguj się</span>`;
-            const ab = document.getElementById('adminBtn');
-            if(ab) ab.remove();
-        }
-        renderNav();
-        loadArticles();
-        loadTable();
-    }
-
-    function renderNav() {
-        const nav = document.getElementById('mainNav');
-        nav.querySelectorAll('.user-nav').forEach(e => e.remove());
-       
-        Object.keys(categories).forEach(cat => {
-            const li = document.createElement('li');
-            li.className = 'nav-item user-nav';
-            li.innerHTML = `${cat} <div class="dropdown"></div>`;
-            li.onclick = () => filterArticles(cat);
-           
-            const drop = li.querySelector('.dropdown');
-            categories[cat].forEach(sub => {
-                const subDiv = document.createElement('div');
-                subDiv.className = 'dropdown-item';
-                subDiv.innerText = sub;
-                subDiv.onclick = (e) => { e.stopPropagation(); filterArticles(cat, sub); };
-                drop.appendChild(subDiv);
-            });
-            nav.insertBefore(li, document.getElementById('adminBtn'));
-        });
-    }
-
-    function openAuthModal(mode) {
+    // --- LOGOWANIE I REJESTRACJA ---
+    function toggleModal(mode) {
+        currentMode = mode;
         const modal = document.getElementById('authModal');
         const title = document.getElementById('modalTitle');
-        const btn = document.getElementById('authBtn');
-        const toggle = document.getElementById('modalToggle');
-       
+        const btn = document.getElementById('mainAuthBtn');
+        const footer = document.getElementById('modalSwitchArea');
+
         modal.style.display = 'block';
         if (mode === 'login') {
             title.innerText = 'Logowanie';
-            btn.innerText = 'Zaloguj';
-            btn.onclick = () => login();
-            toggle.innerHTML = 'Nie masz konta? <span style="cursor:pointer; color:blue" onclick="openAuthModal(\'reg\')">Zarejestruj się</span>';
+            btn.innerText = 'Wejdź';
+            footer.innerHTML = 'Nie masz konta? <span onclick="toggleModal(\'reg\')">Zarejestruj się</span>';
         } else {
             title.innerText = 'Rejestracja';
             btn.innerText = 'Zarejestruj';
-            btn.onclick = () => register();
-            toggle.innerHTML = 'Masz już konto? <span style="cursor:pointer; color:blue" onclick="openAuthModal(\'login\')">Zaloguj się</span>';
+            footer.innerHTML = 'Masz już konto? <span onclick="toggleModal(\'login\')">Zaloguj się</span>';
         }
     }
 
-    function register() {
-        const login = document.getElementById('authLogin').value;
-        const pass = document.getElementById('authPass').value;
-        const email = login + "@dziennik.pl";
-        auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-            db.ref('users/' + cred.user.uid).set({ username: login, role: 'user' });
-            document.getElementById('authModal').style.display = 'none';
-        }).catch(err => alert(err.message));
+    function handleAuth() {
+        const user = document.getElementById('uLogin').value;
+        const pass = document.getElementById('uPass').value;
+        const email = user + "@dziennik.pl"; // Systemowy e-mail na bazie nicku
+
+        if (currentMode === 'reg') {
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((res) => {
+                    db.ref('users/' + res.user.uid).set({ username: user, role: 'admin' }); // Pierwszy użytkownik dostaje admina
+                    location.reload();
+                }).catch(err => alert("Błąd rejestracji: " + err.message));
+        } else {
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => location.reload())
+                .catch(err => alert("Błąd logowania: " + err.message));
+        }
     }
 
-    function login() {
-        const login = document.getElementById('authLogin').value;
-        const pass = document.getElementById('authPass').value;
-        auth.signInWithEmailAndPassword(login + "@dziennik.pl", pass).then(() => {
-            document.getElementById('authModal').style.display = 'none';
-        }).catch(err => alert(err.message));
-    }
+    // --- MONITOROWANIE STANU UŻYTKOWNIKA ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            db.ref('users/' + user.uid).once('value', snapshot => {
+                const data = snapshot.val();
+                document.getElementById('authBox').innerHTML = `${data.username} | <span onclick="auth.signOut().then(()=>location.reload())">Wyloguj się</span>`;
+                if (data.role === 'admin' || data.role === 'mod') {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
+            });
+        }
+    });
 
+    // --- NAWIGACJA WIDOKÓW ---
     function showView(view) {
         document.getElementById('homeView').style.display = view === 'home' ? 'block' : 'none';
-        document.getElementById('articleView').style.display = view === 'article' ? 'block' : 'none';
         document.getElementById('adminView').style.display = view === 'admin' ? 'block' : 'none';
-        document.querySelector('.back-btn').style.display = view === 'article' ? 'block' : 'none';
     }
 
-    let editorBlocks = [];
-    function switchAdminTab(tab) {
-        const cont = document.getElementById('adminTabContent');
-        document.querySelectorAll('.admin-nav-item').forEach(e => e.classList.remove('active'));
-        cont.innerHTML = '';
-       
-        if (tab === 'art') {
-            cont.innerHTML = `
-                <div class="editor-section">
-                    <h3>Nowy Artykuł</h3>
-                    <input type="text" id="artTitle" placeholder="Tytuł" style="width:100%; font-size:20px; margin-bottom:10px;">
-                    <input type="text" id="artSub" placeholder="Podtytuł" style="width:100%; margin-bottom:10px;">
-                    <input type="text" id="artMini" placeholder="Link do miniaturki" style="width:100%; margin-bottom:10px;">
-                    <select id="artCat"><option>Wybierz kategorię</option></select>
-                    <div id="editorSpace"></div>
-                    <div class="block-controls">
-                        <button onclick="addBlock('text')">+ Tekst</button>
-                        <button onclick="addBlock('img')">+ Zdjęcie</button>
-                    </div>
-                    <label><input type="checkbox" id="onMain"> Dodaj na główną</label>
-                    <label><input type="checkbox" id="isPremium"> Premium</label>
-                    <button onclick="saveArticle()" style="display:block; margin-top:20px; padding:10px 30px; background:green; color:#fff; border:none;">OPUBLIKUJ</button>
-                </div>`;
-            editorBlocks = [];
-            addBlock('text');
-        } else if (tab === 'tab') {
-            renderTableEditor();
-        } else if (tab === 'rang') {
-            renderRankEditor();
-        }
-    }
-
+    // --- EDYTOR ARTYKUŁÓW ---
     function addBlock(type) {
-        const id = Date.now();
+        const container = document.getElementById('editorBlocks');
         const div = document.createElement('div');
-        div.className = 'content-block';
-        div.id = 'block-' + id;
-       
-        let html = '';
+        div.style.border = "1px dashed #ccc";
+        div.style.padding = "10px";
+        div.style.marginBottom = "10px";
+
         if (type === 'text') {
-            html = `
-                <div class="toolbar">
-                    <button onclick="execStyle('bold', ${id})">B</button>
-                    <button onclick="execStyle('italic', ${id})">I</button>
-                    <button onclick="execStyle('underline', ${id})">U</button>
-                    <select onchange="execStyle('fontName', ${id}, this.value)">
-                        <option value="Arial">Arial</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Roboto">Roboto</option>
-                        <option value="Montserrat">Montserrat</option>
-                    </select>
-                    <input type="color" onchange="execStyle('foreColor', ${id}, this.value)" title="Kolor liter">
-                    <input type="color" onchange="execStyle('hiliteColor', ${id}, this.value)" title="Tło linijki">
-                </div>
-                <div contenteditable="true" class="text-block-area" id="edit-${id}"></div>
-            `;
+            div.innerHTML = `<textarea class="text-area" placeholder="Treść tekstu..."></textarea>`;
         } else {
-            html = `<input type="text" placeholder="Link do zdjęcia lub wgraj plik" id="img-${id}">`;
+            div.innerHTML = `<input type="text" placeholder="Link do zdjęcia (URL)">`;
         }
-       
-        div.innerHTML = html + `<button onclick="this.parentElement.remove()" style="position:absolute; top:0; right:0; background:red; color:#fff; border:none;">X</button>`;
-        document.getElementById('editorSpace').appendChild(div);
-        editorBlocks.push({id, type});
+        container.appendChild(div);
     }
 
-    function execStyle(cmd, id, val = null) {
-        document.getElementById('edit-' + id).focus();
-        document.execCommand(cmd, false, val);
-    }
+    // Dodaj pierwszy blok na start
+    addBlock('text');
 
-    function saveArticle() {
-        const blocksData = [];
-        document.querySelectorAll('.content-block').forEach(b => {
-            const id = b.id.split('-')[1];
-            const textArea = document.getElementById('edit-' + id);
-            const imgInput = document.getElementById('img-' + id);
-            if(textArea) blocksData.push({type: 'text', content: textArea.innerHTML});
-            else if(imgInput) blocksData.push({type: 'img', content: imgInput.value});
+    function publishArticle() {
+        const title = document.getElementById('artTitle').value;
+        const sub = document.getElementById('artSub').value;
+        const mini = document.getElementById('artMini').value;
+        
+        // Zbieranie danych z bloków
+        const blocks = [];
+        document.getElementById('editorBlocks').childNodes.forEach(node => {
+            const txt = node.querySelector('textarea');
+            const img = node.querySelector('input');
+            if(txt) blocks.push({type: 'text', val: txt.value});
+            if(img) blocks.push({type: 'img', val: img.value});
         });
 
-        const art = {
-            title: document.getElementById('artTitle').value,
-            subtitle: document.getElementById('artSub').value,
-            mini: document.getElementById('artMini').value,
-            onMain: document.getElementById('onMain').checked,
-            premium: document.getElementById('isPremium').checked,
-            blocks: blocksData,
-            author: userData.username,
-            date: new Date().toISOString(),
-            cat: "Sport",
-            subcat: "Piłka Nożna"
-        };
-        db.ref('articles').push(art);
-        alert("Artykuł zapisany!");
-        showView('home');
-    }
-
-    function loadArticles() {
-        db.ref('articles').on('value', s => {
-            const list = document.getElementById('articlesList');
-            list.innerHTML = '';
-            s.forEach(child => {
-                const a = child.val();
-                if (a.premium && (!userData || userData.role === 'user')) return;
-               
-                const div = document.createElement('div');
-                div.className = 'article-card';
-                div.innerHTML = `
-                    <div class="info">
-                        <div class="cat">${a.cat} | ${a.subcat} ${a.premium ? '<span style="color:gold">[PREMIUM]</span>' : ''}</div>
-                        <h2>${a.title}</h2>
-                        <p>${a.subtitle}</p>
-                    </div>
-                    <img src="${a.mini}" class="thumb">
-                `;
-                div.onclick = () => openArticle(a);
-                list.appendChild(div);
-            });
+        db.ref('articles').push({
+            title, sub, mini, blocks, date: Date.now()
+        }).then(() => {
+            alert("Opublikowano!");
+            showView('home');
         });
     }
 
-    function openArticle(a) {
-        showView('article');
-        const cont = document.getElementById('articleContent');
-        const date = new Date(a.date).toLocaleString('pl-PL');
-        let bodyHtml = '';
-        a.blocks.forEach(b => {
-            if(b.type === 'text') bodyHtml += `<div>${b.content}</div>`;
-            else bodyHtml += `<img src="${b.content}" class="article-img">`;
-        });
-
-        cont.innerHTML = `
-            <div style="color:red; font-weight:bold;">${a.cat}</div>
-            <h1>${a.title}</h1>
-            <h3 style="color:gray;">${a.subtitle}</h3>
-            <div class="meta">Autor: ${a.author} | ${date}</div>
-            <div class="article-body">${bodyHtml}</div>
-        `;
-    }
-
-    function loadTable() {
-        db.ref('leagueTable').on('value', s => {
-            const data = s.val() || [];
-            const cont = document.getElementById('miniTable');
-            let html = '<table class="ekstraklasa-table"><tr><th>LP</th><th>Klub</th><th>PKT</th><th>Ostatnie 5</th></tr>';
-            data.forEach((row, i) => {
-                const form = row.form || [];
-                let formHtml = '';
-                form.forEach(f => {
-                    const cls = f === 'W' ? 'win' : f === 'P' ? 'loss' : 'draw';
-                    formHtml += `<span class="dot ${cls}"></span>`;
-                });
-                html += `<tr class="${i >= 15 ? 'relegation' : ''}"><td>${i+1}</td><td>${row.name}</td><td>${row.pkt}</td><td>${formHtml}</td></tr>`;
-            });
-            cont.innerHTML = html + '</table>';
-        });
-    }
-
-    function renderTableEditor() {
-        const cont = document.getElementById('adminTabContent');
-        cont.innerHTML = '<h3>Edycja Tabeli</h3><div id="tableEditorList"></div><button onclick="saveTableEditor()">Zapisz Tabelę</button>';
-        db.ref('leagueTable').once('value', s => {
-            const data = s.val() || Array(18).fill({name: '', rm:0, w:0, p:0, r:0, pkt:0, bz:0, bs:0, rb:0, form: []});
-            const list = document.getElementById('tableEditorList');
-            data.forEach((row, i) => {
-                const d = document.createElement('div');
-                d.style.display = 'flex';
-                d.style.fontSize = '10px';
-                d.innerHTML = `
-                    <span>${i+1}</span>
-                    <input type="text" value="${row.name}" placeholder="Klub" style="width:80px">
-                    <input type="number" value="${row.pkt}" placeholder="Pkt" style="width:40px">
-                    <input type="text" value="${row.form.join('')}" placeholder="WWRPP" style="width:60px">
-                `;
-                list.appendChild(d);
-            });
-        });
+    // Zamknięcie modala po kliknięciu poza nim
+    window.onclick = function(event) {
+        const modal = document.getElementById('authModal');
+        if (event.target == modal) modal.style.display = "none";
     }
 </script>
+
 </body>
 </html>
