@@ -3,278 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DZIENNIK-NOWOCZESNY.PL | V3.1 FINAL</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:wght@400;700&family=Montserrat:wght@400;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-    
+    <title>Dziennik 3.0</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        :root { --black: #000; --white: #fff; --red: #dc3545; --gray: #6c757d; }
-        body { font-family: 'EB Garamond', serif; margin: 0; background: #f4f4f4; color: var(--black); }
-        
-        /* Blokady UI */
-        .admin-only { display: none !important; }
-        .edit-active .admin-only { display: block !important; }
-        .edit-active .admin-inline { display: inline-block !important; }
-        .admin-inline { display: none !important; }
+        :root {
+            --main-bg: #ffffff;
+            --text-black: #000000;
+            --text-gray: #666666;
+            --accent-red: #ff0000;
+            --admin-yellow: #ffcc00;
+            --border-light: #e0e0e0;
+        }
 
-        /* Pasek Górny */
-        #top-bar { background: #000; color: #fff; padding: 8px 20px; font-family: Montserrat; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        header { background: #fff; border-bottom: 8px double #000; padding: 30px; text-align: center; }
-        .logo { font-size: clamp(30px, 8vw, 60px); font-weight: 900; text-transform: uppercase; color: #000; text-decoration: none; font-family: 'Playfair Display'; }
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: var(--main-bg); color: var(--text-black); }
+       
+        header { padding: 10px 20px; border-bottom: 1px solid var(--border-light); }
+        .journal-name { font-size: 32px; font-weight: bold; text-align: center; text-transform: uppercase; margin-bottom: 5px; }
+       
+        .top-bar { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid var(--border-light); padding: 5px 20px; background: #f9f9f9; }
+        .auth-status span { cursor: pointer; text-decoration: underline; }
 
-        /* Nawigacja */
-        nav { background: #fff; border-bottom: 3px solid #000; position: sticky; top: 0; z-index: 1000; display: flex; flex-wrap: wrap; justify-content: center; }
-        .nav-item { padding: 15px 20px; font-family: Montserrat; font-size: 13px; font-weight: bold; text-transform: uppercase; cursor: pointer; position: relative; }
-        .nav-item:hover { background: #000; color: #fff; }
-        .dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 2px solid #000; min-width: 160px; z-index: 10; }
+        nav { display: flex; align-items: center; padding: 0 20px; background: #fff; border-bottom: 2px solid #000; position: sticky; top: 0; z-index: 1000; }
+        .nav-list { display: flex; list-style: none; margin: 0; padding: 0; }
+        .nav-item { position: relative; padding: 15px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        .nav-item:hover { background: #f0f0f0; }
+        .dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #000; min-width: 180px; }
         .nav-item:hover .dropdown { display: block; }
-        .dropdown a { display: block; padding: 10px; color: #000; text-decoration: none; font-size: 11px; border-bottom: 1px solid #eee; }
+        .dropdown-item { padding: 10px; border-bottom: 1px solid #eee; text-transform: none; font-weight: normal; }
+        .dropdown-item:hover { background: #f9f9f9; }
+       
+        .admin-tools-btn { color: var(--accent-red); border-left: 1px solid var(--border-light); }
 
-        /* Kontener główny */
-        .main-grid { max-width: 1600px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
-        @media (max-width: 1000px) { .main-grid { grid-template-columns: 1fr; } }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 20px; }
+        .main-content { flex: 3; }
+        .sidebar { flex: 1; }
 
-        /* Artykuły */
-        .art-box { background: #fff; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px; position: relative; }
-        .art-badge { color: var(--red); font-family: Montserrat; font-size: 11px; font-weight: bold; margin-bottom: 8px; }
-        .art-title { font-family: 'Playfair Display'; font-size: 32px; margin: 10px 0; line-height: 1.1; }
+        .back-btn { cursor: pointer; display: none; margin-bottom: 15px; font-size: 20px; }
 
-        /* Tabela Ekstraklasy - wg Twojego zdjęcia */
-        .league-container { background: #fff; border: 2px solid #000; overflow-x: auto; margin-top: 15px; }
-        table.ekstra { width: 100%; border-collapse: collapse; font-family: Montserrat; font-size: 12px; min-width: 600px; }
-        table.ekstra th, table.ekstra td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-        table.ekstra th { background: #eee; }
-        table.ekstra tr.relegation td { background: #ffe6e6; }
-        .form-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid #555; margin: 0 1px; }
-        .dot-W { background: #28a745; } .dot-R { background: #6c757d; } .dot-P { background: #dc3545; } .dot-E { background: #fff; }
+        .article-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-light); cursor: pointer; }
+        .article-card .info { flex: 2; }
+        .article-card .cat { color: var(--accent-red); font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        .article-card h2 { margin: 5px 0; font-size: 24px; }
+        .article-card p { color: var(--text-gray); margin: 0; font-size: 16px; }
+        .article-card .thumb { width: 150px; height: 100px; object-fit: cover; background: #eee; }
 
-        /* Edytor Modułowy */
-        .editor-module { border: 2px solid #000; background: #fafafa; padding: 15px; margin-bottom: 10px; }
-        .toolbar { background: #eee; padding: 5px; margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
-        .editable { min-height: 100px; background: #fff; border: 1px solid #ccc; padding: 10px; font-size: 18px; outline: none; }
+        .full-article h1 { font-size: 36px; margin-bottom: 10px; }
+        .full-article .meta { color: var(--text-gray); font-size: 14px; margin-bottom: 20px; }
+        .article-body { line-height: 1.6; border-top: 1px solid #eee; padding-top: 20px; }
+        .article-img { max-width: 100%; margin: 15px 0; display: block; }
 
-        /* Logowanie */
-        .auth-container { max-width: 400px; margin: 50px auto; background: #fff; border: 4px solid #000; padding: 30px; box-shadow: 15px 15px 0 #000; }
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #000; box-sizing: border-box; font-family: Montserrat; }
-        .err-msg { color: var(--red); font-weight: bold; text-align: center; margin-bottom: 10px; display: none; font-size: 13px; }
+        .ekstraklasa-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+        .ekstraklasa-table th { background: #000; color: #fff; padding: 5px; }
+        .ekstraklasa-table td { border-bottom: 1px solid #ddd; padding: 5px; }
+        .relegation { background: #ffe6e6; }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin: 0 1px; }
+        .win { background: green; } .loss { background: red; } .draw { background: gray; }
 
-        /* Easter Egg */
-        #modal-kobieta { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
-        .modal-box { background:#fff; padding:40px; border:5px solid #000; text-align:center; max-width:500px; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: #fff; width: 350px; margin: 10% auto; padding: 30px; border-radius: 5px; }
+        .modal-content input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        .modal-content button { width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
+        .modal-footer { margin-top: 15px; font-size: 12px; text-align: center; }
+
+        .admin-panel { display: none; }
+        .admin-nav { display: flex; border-bottom: 1px solid #000; margin-bottom: 20px; }
+        .admin-nav-item { padding: 10px 15px; cursor: pointer; border: 1px solid transparent; }
+        .admin-nav-item.active { border: 1px solid #000; border-bottom: none; background: #eee; }
+
+        .editor-section { border: 1px solid #ddd; padding: 20px; margin-bottom: 10px; }
+        .block-controls { display: flex; gap: 10px; margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .content-block { margin-bottom: 15px; border: 1px dashed #ccc; padding: 10px; position: relative; }
+        .text-block-area { width: 100%; min-height: 100px; margin-top: 5px; }
+        .toolbar { display: flex; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
+        .toolbar button, .toolbar select { font-size: 11px; padding: 2px 5px; }
+
+        .rank-admin { border: 1px solid var(--admin-yellow); padding: 2px 5px; font-weight: bold; font-size: 10px; }
     </style>
 </head>
-<body id="main-body">
+<body>
 
-<div id="top-bar">
-    <div id="clock">--.--.---- | --:--:--</div>
-    <div id="user-panel">
-        <span id="user-name">Gość</span> | 
-        <span id="auth-btn" style="cursor:pointer; text-decoration:underline;" onclick="showPage('auth')">Zaloguj się</span>
+<header>
+    <div class="journal-name">Dziennik Nowoczesny</div>
+    <div class="top-bar">
+        <div id="datetime"></div>
+        <div class="auth-status" id="authBox">
+            Gość | <span onclick="openAuthModal('login')">Zaloguj się</span>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <ul class="nav-list" id="mainNav">
+        <li class="nav-item" onclick="showView('home')">Strona Główna</li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="main-content" id="viewContainer">
+        <div id="homeView">
+            <div id="articlesList"></div>
+        </div>
+       
+        <div id="articleView" class="full-article">
+            <span class="back-btn" onclick="showView('home')">← Wróć</span>
+            <div id="articleContent"></div>
+        </div>
+
+        <div id="adminView" class="admin-panel">
+            <div class="admin-nav">
+                <div class="admin-nav-item active" onclick="switchAdminTab('art')">Edycja Artykułów</div>
+                <div class="admin-nav-item" onclick="switchAdminTab('tab')">Tabela Ekstraklasy</div>
+                <div class="admin-nav-item" onclick="switchAdminTab('rang')">Nadaj rangę</div>
+                <div class="admin-nav-item" onclick="switchAdminTab('stats')">Statystyki</div>
+                <div class="admin-nav-item" onclick="switchAdminTab('other')">Inne</div>
+            </div>
+           
+            <div id="adminTabContent"></div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3>Tabela Ekstraklasy</h3>
+        <div id="miniTable"></div>
     </div>
 </div>
 
-<header><a href="#" class="logo" onclick="showPage('home')">Dziennik-Nowoczesny.pl</a></header>
-
-<nav id="nav-bar">
-    <div class="nav-item" onclick="showPage('home')">Strona Główna</div>
-    <div class="nav-item">Świat<div class="dropdown"><a href="#">Europa</a><a href="#">USA</a></div></div>
-    <div class="nav-item" onclick="showPage('sport')">Sport<div class="dropdown"><a href="#">Piłka Nożna</a><a href="#">Tabela</a></div></div>
-    <div class="nav-item" style="color:var(--red)" onclick="openKobieta()">Kobieta</div>
-    <div class="nav-item admin-only" onclick="showPage('admin')" style="background:#000; color:#fff;">ZARZĄDZANIE ⚙️</div>
-</nav>
-
-<div class="main-grid">
-    <main>
-        <div id="page-home" class="view active-view">
-            <h2 style="font-family:Playfair Display; border-bottom:3px solid #000;">NAJNOWSZE ARTYKUŁY</h2>
-            <div id="news-feed">
-                <div class="art-box">
-                    <span class="admin-inline" style="cursor:pointer; float:right;" onclick="alert('Opcje: Przenieś / Usuń')">⚙️</span>
-                    <div class="art-badge">POLITYKA / KRAJ</div>
-                    <h3 class="art-title">Witaj w nowym Dzienniku</h3>
-                    <p>Zaloguj się, aby zarządzać treścią i tabelą.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-admin" class="view" style="display:none;">
-            <h2 style="font-family:Playfair Display;">PANEL STEROWANIA</h2>
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <button onclick="adminTab('new-art')">Dodaj Artykuł</button>
-                <button onclick="adminTab('manage-cats')">Kategorie</button>
-                <button onclick="adminTab('manage-table')">Tabela</button>
-            </div>
-
-            <div id="tab-new-art">
-                <input type="text" id="art-title" class="auth-input" placeholder="Tytuł artykułu...">
-                <div style="margin: 10px 0;">
-                    <label><input type="checkbox" id="is-main"> Na Główną</label>
-                    <label style="margin-left:20px;"><input type="checkbox" id="is-premium"> Sekcja Premium</label>
-                </div>
-                <div id="editor-container">
-                    <div class="editor-module">
-                        <div class="toolbar">
-                            <button onclick="format('bold')">B</button>
-                            <button onclick="format('italic')">I</button>
-                            <select onchange="format('fontName', this.value)">
-                                <option value="Times New Roman">New Roma</option>
-                                <option value="UnifrakturMaguntia">Gotyk</option>
-                                <option value="Arial">Arial</option>
-                            </select>
-                            Kolor: <input type="color" onchange="format('foreColor', this.value)">
-                            Tło: <input type="color" onchange="format('hiliteColor', this.value)">
-                        </div>
-                        <div class="editable" contenteditable="true">Treść artykułu...</div>
-                    </div>
-                </div>
-                <button onclick="addModule('text')">+ Tekst</button> <button onclick="addModule('img')">+ Zdjęcie</button>
-                <br><br>
-                <button style="background:var(--red); color:#fff; padding:15px; border:none; cursor:pointer; width:100%;">OPUBLIKUJ</button>
-            </div>
-        </div>
-
-        <div id="page-auth" class="view" style="display:none;">
-            <div class="auth-container">
-                <h2 id="auth-title" style="text-align:center; font-family:Playfair Display;">LOGOWANIE</h2>
-                <div id="auth-err" class="err-msg">Błąd logowania!</div>
-                <input type="text" id="email" class="auth-input" placeholder="Nazwa Użytkownika">
-                <input type="password" id="pass" class="auth-input" placeholder="Hasło">
-                <button class="auth-input" style="background:#000; color:#fff; font-weight:bold; cursor:pointer;" onclick="handleAuth()">WEJDŹ</button>
-                <p id="auth-toggle" style="text-align:center; cursor:pointer; font-size:12px;" onclick="toggleAuth()">Nie masz konta? Zarejestruj się</p>
-            </div>
-        </div>
-    </main>
-
-    <aside id="sidebar">
-        <h3 style="font-family:Playfair Display; border-bottom:2px solid #000;">TABELA EKSTRAKLASY</h3>
-        <div class="league-container">
-            <table class="ekstra">
-                <thead>
-                    <tr><th>Poz</th><th style="text-align:left">Klub</th><th>RM</th><th>BZ</th><th>Pkt</th><th>Ostatnie 5</th></tr>
-                </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
-        </div>
-        <div style="height:200px; border:2px dashed #ccc; margin-top:20px; display:flex; align-items:center; justify-content:center; background:#eee;">
-            BANER REKLAMOWY
-        </div>
-    </aside>
-</div>
-
-<div id="modal-kobieta" onclick="this.style.display='none'">
-    <div class="modal-box">
-        <h2>SEKCJA KOBIETA</h2>
-        <p>Poważne dziennikarstwo nie zajmuje się plotkami. Sprawdź tutaj:</p>
-        <button onclick="window.open('https://pudelek.pl')">Pudelek</button>
-        <button onclick="window.open('https://plejada.pl')">Plejada</button>
-        <br><br><button>Wróć do Dziennika</button>
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Logowanie</h2>
+        <input type="text" id="authLogin" placeholder="Nazwa użytkownika (Login)">
+        <input type="password" id="authPass" placeholder="Hasło">
+        <button id="authBtn">Zaloguj</button>
+        <div class="modal-footer" id="modalToggle"></div>
     </div>
 </div>
 
 <script>
-    // KONFIGURACJA FIREBASE
     const firebaseConfig = {
-        databaseURL: "https://grapanstwamiasta-default-rtdb.firebaseio.com/",
+        apiKey: "TWOJE_API_KEY",
+        authDomain: "grapanstwamiasta.firebaseapp.com",
+        databaseURL: "https://grapanstwamiasta-default-rtdb.firebaseio.com",
+        projectId: "grapanstwamiasta",
+        storageBucket: "grapanstwamiasta.appspot.com",
+        messagingSenderId: "SENDER_ID",
+        appId: "APP_ID"
     };
+
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
     const auth = firebase.auth();
+    const db = firebase.database();
 
-    let isEditMode = false;
-    let authMode = 'login';
+    let currentUser = null;
+    let userData = null;
+    let articles = [];
+    let categories = { "Sport": ["Piłka Nożna", "Tenis", "Szachy"], "Polityka": ["Krajowa", "Zagraniczna"] };
 
-    // ZEGAR
-    setInterval(() => {
-        const n = new Date();
-        document.getElementById('clock').innerText = n.toLocaleString('pl-PL');
-    }, 1000);
-
-    // NAWIGACJA
-    function showPage(id) {
-        document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-        document.getElementById('page-' + id).style.display = 'block';
-        document.getElementById('sidebar').style.display = (id === 'auth' || id === 'admin') ? 'none' : 'block';
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('datetime').innerText = now.toLocaleString('pl-PL');
     }
+    setInterval(updateDateTime, 1000);
 
-    // AUTH
-    function toggleAuth() {
-        authMode = authMode === 'login' ? 'register' : 'login';
-        document.getElementById('auth-title').innerText = authMode === 'login' ? 'LOGOWANIE' : 'REJESTRACJA';
-        document.getElementById('auth-toggle').innerText = authMode === 'login' ? 'Nie masz konta? Zarejestruj się' : 'Masz już konto? Zaloguj się';
-    }
-
-    function handleAuth() {
-        const email = document.getElementById('email').value + "@dziennik.pl";
-        const pass = document.getElementById('pass').value;
-        const err = document.getElementById('auth-err');
-        err.style.display = 'none';
-
-        if(authMode === 'login') {
-            auth.signInWithEmailAndPassword(email, pass)
-                .then(res => loginSuccess(res.user))
-                .catch(() => { err.innerText = "Hasło jest niepoprawne."; err.style.display = 'block'; });
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            db.ref('users/' + user.uid).once('value', s => {
+                userData = s.val();
+                renderUI();
+            });
         } else {
-            auth.createUserWithEmailAndPassword(email, pass)
-                .then(res => loginSuccess(res.user))
-                .catch(() => { err.innerText = "Ta nazwa jest już zajęta."; err.style.display = 'block'; });
+            currentUser = null;
+            userData = null;
+            renderUI();
         }
+    });
+
+    function renderUI() {
+        const authBox = document.getElementById('authBox');
+        const nav = document.getElementById('mainNav');
+       
+        if (currentUser && userData) {
+            authBox.innerHTML = `${userData.username} | <span onclick="auth.signOut()">Wyloguj się</span>`;
+            if (userData.role === 'admin' || userData.role === 'mod') {
+                if (!document.getElementById('adminBtn')) {
+                    const li = document.createElement('li');
+                    li.id = 'adminBtn';
+                    li.className = 'nav-item admin-tools-btn';
+                    li.innerHTML = '🔧 Narzędzia edycji';
+                    li.onclick = () => showView('admin');
+                    nav.appendChild(li);
+                }
+            }
+        } else {
+            authBox.innerHTML = `Gość | <span onclick="openAuthModal('login')">Zaloguj się</span>`;
+            const ab = document.getElementById('adminBtn');
+            if(ab) ab.remove();
+        }
+        renderNav();
+        loadArticles();
+        loadTable();
     }
 
-    function loginSuccess(user) {
-        document.getElementById('user-name').innerText = user.email.split('@')[0];
-        document.getElementById('auth-btn').innerText = "Wyloguj";
-        document.getElementById('auth-btn').onclick = () => location.reload();
-        document.getElementById('main-body').classList.add('edit-active');
-        isEditMode = true;
-        showPage('home');
-    }
-
-    // TABELA
-    const kluby = ["Lech Poznań", "Jagiellonia", "Górnik Zabrze", "Wisła Płock", "Zagłębie Lubin", "Raków", "GKS Katowice", "Motor Lublin", "Lechia", "Radomiak", "Legia Warszawa", "Korona Kielce", "Cracovia", "Pogoń Szczecin", "Piast Gliwice", "Arka", "Widzew Łódź", "Bruk-Bet"];
-    
-    function renderTable() {
-        const body = document.getElementById('table-body');
-        body.innerHTML = '';
-        kluby.forEach((k, i) => {
-            const tr = document.createElement('tr');
-            if(i >= 15) tr.className = 'relegation';
-            tr.innerHTML = `
-                <td>${i+1}</td>
-                <td style="text-align:left">${k} ${isEditMode ? `<span onclick="move(${i},-1)">▲</span><span onclick="move(${i},1)">▼</span>` : ''}</td>
-                <td>29</td><td>51</td><td>49</td>
-                <td><div class="form-dot dot-W"></div><div class="form-dot dot-R"></div><div class="form-dot dot-P"></div></td>
-            `;
-            body.appendChild(tr);
+    function renderNav() {
+        const nav = document.getElementById('mainNav');
+        nav.querySelectorAll('.user-nav').forEach(e => e.remove());
+       
+        Object.keys(categories).forEach(cat => {
+            const li = document.createElement('li');
+            li.className = 'nav-item user-nav';
+            li.innerHTML = `${cat} <div class="dropdown"></div>`;
+            li.onclick = () => filterArticles(cat);
+           
+            const drop = li.querySelector('.dropdown');
+            categories[cat].forEach(sub => {
+                const subDiv = document.createElement('div');
+                subDiv.className = 'dropdown-item';
+                subDiv.innerText = sub;
+                subDiv.onclick = (e) => { e.stopPropagation(); filterArticles(cat, sub); };
+                drop.appendChild(subDiv);
+            });
+            nav.insertBefore(li, document.getElementById('adminBtn'));
         });
     }
 
-    function move(idx, dir) {
-        if(idx+dir < 0 || idx+dir >= kluby.length) return;
-        const temp = kluby[idx];
-        kluby[idx] = kluby[idx+dir];
-        kluby[idx+dir] = temp;
-        renderTable();
+    function openAuthModal(mode) {
+        const modal = document.getElementById('authModal');
+        const title = document.getElementById('modalTitle');
+        const btn = document.getElementById('authBtn');
+        const toggle = document.getElementById('modalToggle');
+       
+        modal.style.display = 'block';
+        if (mode === 'login') {
+            title.innerText = 'Logowanie';
+            btn.innerText = 'Zaloguj';
+            btn.onclick = () => login();
+            toggle.innerHTML = 'Nie masz konta? <span style="cursor:pointer; color:blue" onclick="openAuthModal(\'reg\')">Zarejestruj się</span>';
+        } else {
+            title.innerText = 'Rejestracja';
+            btn.innerText = 'Zarejestruj';
+            btn.onclick = () => register();
+            toggle.innerHTML = 'Masz już konto? <span style="cursor:pointer; color:blue" onclick="openAuthModal(\'login\')">Zaloguj się</span>';
+        }
     }
 
-    // EDYTOR
-    function format(cmd, val) { document.execCommand(cmd, false, val); }
-    function addModule(type) {
-        const container = document.getElementById('editor-container');
+    function register() {
+        const login = document.getElementById('authLogin').value;
+        const pass = document.getElementById('authPass').value;
+        const email = login + "@dziennik.pl";
+        auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+            db.ref('users/' + cred.user.uid).set({ username: login, role: 'user' });
+            document.getElementById('authModal').style.display = 'none';
+        }).catch(err => alert(err.message));
+    }
+
+    function login() {
+        const login = document.getElementById('authLogin').value;
+        const pass = document.getElementById('authPass').value;
+        auth.signInWithEmailAndPassword(login + "@dziennik.pl", pass).then(() => {
+            document.getElementById('authModal').style.display = 'none';
+        }).catch(err => alert(err.message));
+    }
+
+    function showView(view) {
+        document.getElementById('homeView').style.display = view === 'home' ? 'block' : 'none';
+        document.getElementById('articleView').style.display = view === 'article' ? 'block' : 'none';
+        document.getElementById('adminView').style.display = view === 'admin' ? 'block' : 'none';
+        document.querySelector('.back-btn').style.display = view === 'article' ? 'block' : 'none';
+    }
+
+    let editorBlocks = [];
+    function switchAdminTab(tab) {
+        const cont = document.getElementById('adminTabContent');
+        document.querySelectorAll('.admin-nav-item').forEach(e => e.classList.remove('active'));
+        cont.innerHTML = '';
+       
+        if (tab === 'art') {
+            cont.innerHTML = `
+                <div class="editor-section">
+                    <h3>Nowy Artykuł</h3>
+                    <input type="text" id="artTitle" placeholder="Tytuł" style="width:100%; font-size:20px; margin-bottom:10px;">
+                    <input type="text" id="artSub" placeholder="Podtytuł" style="width:100%; margin-bottom:10px;">
+                    <input type="text" id="artMini" placeholder="Link do miniaturki" style="width:100%; margin-bottom:10px;">
+                    <select id="artCat"><option>Wybierz kategorię</option></select>
+                    <div id="editorSpace"></div>
+                    <div class="block-controls">
+                        <button onclick="addBlock('text')">+ Tekst</button>
+                        <button onclick="addBlock('img')">+ Zdjęcie</button>
+                    </div>
+                    <label><input type="checkbox" id="onMain"> Dodaj na główną</label>
+                    <label><input type="checkbox" id="isPremium"> Premium</label>
+                    <button onclick="saveArticle()" style="display:block; margin-top:20px; padding:10px 30px; background:green; color:#fff; border:none;">OPUBLIKUJ</button>
+                </div>`;
+            editorBlocks = [];
+            addBlock('text');
+        } else if (tab === 'tab') {
+            renderTableEditor();
+        } else if (tab === 'rang') {
+            renderRankEditor();
+        }
+    }
+
+    function addBlock(type) {
+        const id = Date.now();
         const div = document.createElement('div');
-        div.className = 'editor-module';
-        div.innerHTML = type === 'text' ? 
-            `<div class="toolbar"><button onclick="format('bold')">B</button></div><div class="editable" contenteditable="true">Tekst...</div>` :
-            `Link do zdjęcia: <input type="text" style="width:80%">`;
-        container.appendChild(div);
+        div.className = 'content-block';
+        div.id = 'block-' + id;
+       
+        let html = '';
+        if (type === 'text') {
+            html = `
+                <div class="toolbar">
+                    <button onclick="execStyle('bold', ${id})">B</button>
+                    <button onclick="execStyle('italic', ${id})">I</button>
+                    <button onclick="execStyle('underline', ${id})">U</button>
+                    <select onchange="execStyle('fontName', ${id}, this.value)">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Montserrat">Montserrat</option>
+                    </select>
+                    <input type="color" onchange="execStyle('foreColor', ${id}, this.value)" title="Kolor liter">
+                    <input type="color" onchange="execStyle('hiliteColor', ${id}, this.value)" title="Tło linijki">
+                </div>
+                <div contenteditable="true" class="text-block-area" id="edit-${id}"></div>
+            `;
+        } else {
+            html = `<input type="text" placeholder="Link do zdjęcia lub wgraj plik" id="img-${id}">`;
+        }
+       
+        div.innerHTML = html + `<button onclick="this.parentElement.remove()" style="position:absolute; top:0; right:0; background:red; color:#fff; border:none;">X</button>`;
+        document.getElementById('editorSpace').appendChild(div);
+        editorBlocks.push({id, type});
     }
 
-    function openKobieta() { document.getElementById('modal-kobieta').style.display='flex'; }
+    function execStyle(cmd, id, val = null) {
+        document.getElementById('edit-' + id).focus();
+        document.execCommand(cmd, false, val);
+    }
 
-    renderTable();
+    function saveArticle() {
+        const blocksData = [];
+        document.querySelectorAll('.content-block').forEach(b => {
+            const id = b.id.split('-')[1];
+            const textArea = document.getElementById('edit-' + id);
+            const imgInput = document.getElementById('img-' + id);
+            if(textArea) blocksData.push({type: 'text', content: textArea.innerHTML});
+            else if(imgInput) blocksData.push({type: 'img', content: imgInput.value});
+        });
+
+        const art = {
+            title: document.getElementById('artTitle').value,
+            subtitle: document.getElementById('artSub').value,
+            mini: document.getElementById('artMini').value,
+            onMain: document.getElementById('onMain').checked,
+            premium: document.getElementById('isPremium').checked,
+            blocks: blocksData,
+            author: userData.username,
+            date: new Date().toISOString(),
+            cat: "Sport",
+            subcat: "Piłka Nożna"
+        };
+        db.ref('articles').push(art);
+        alert("Artykuł zapisany!");
+        showView('home');
+    }
+
+    function loadArticles() {
+        db.ref('articles').on('value', s => {
+            const list = document.getElementById('articlesList');
+            list.innerHTML = '';
+            s.forEach(child => {
+                const a = child.val();
+                if (a.premium && (!userData || userData.role === 'user')) return;
+               
+                const div = document.createElement('div');
+                div.className = 'article-card';
+                div.innerHTML = `
+                    <div class="info">
+                        <div class="cat">${a.cat} | ${a.subcat} ${a.premium ? '<span style="color:gold">[PREMIUM]</span>' : ''}</div>
+                        <h2>${a.title}</h2>
+                        <p>${a.subtitle}</p>
+                    </div>
+                    <img src="${a.mini}" class="thumb">
+                `;
+                div.onclick = () => openArticle(a);
+                list.appendChild(div);
+            });
+        });
+    }
+
+    function openArticle(a) {
+        showView('article');
+        const cont = document.getElementById('articleContent');
+        const date = new Date(a.date).toLocaleString('pl-PL');
+        let bodyHtml = '';
+        a.blocks.forEach(b => {
+            if(b.type === 'text') bodyHtml += `<div>${b.content}</div>`;
+            else bodyHtml += `<img src="${b.content}" class="article-img">`;
+        });
+
+        cont.innerHTML = `
+            <div style="color:red; font-weight:bold;">${a.cat}</div>
+            <h1>${a.title}</h1>
+            <h3 style="color:gray;">${a.subtitle}</h3>
+            <div class="meta">Autor: ${a.author} | ${date}</div>
+            <div class="article-body">${bodyHtml}</div>
+        `;
+    }
+
+    function loadTable() {
+        db.ref('leagueTable').on('value', s => {
+            const data = s.val() || [];
+            const cont = document.getElementById('miniTable');
+            let html = '<table class="ekstraklasa-table"><tr><th>LP</th><th>Klub</th><th>PKT</th><th>Ostatnie 5</th></tr>';
+            data.forEach((row, i) => {
+                const form = row.form || [];
+                let formHtml = '';
+                form.forEach(f => {
+                    const cls = f === 'W' ? 'win' : f === 'P' ? 'loss' : 'draw';
+                    formHtml += `<span class="dot ${cls}"></span>`;
+                });
+                html += `<tr class="${i >= 15 ? 'relegation' : ''}"><td>${i+1}</td><td>${row.name}</td><td>${row.pkt}</td><td>${formHtml}</td></tr>`;
+            });
+            cont.innerHTML = html + '</table>';
+        });
+    }
+
+    function renderTableEditor() {
+        const cont = document.getElementById('adminTabContent');
+        cont.innerHTML = '<h3>Edycja Tabeli</h3><div id="tableEditorList"></div><button onclick="saveTableEditor()">Zapisz Tabelę</button>';
+        db.ref('leagueTable').once('value', s => {
+            const data = s.val() || Array(18).fill({name: '', rm:0, w:0, p:0, r:0, pkt:0, bz:0, bs:0, rb:0, form: []});
+            const list = document.getElementById('tableEditorList');
+            data.forEach((row, i) => {
+                const d = document.createElement('div');
+                d.style.display = 'flex';
+                d.style.fontSize = '10px';
+                d.innerHTML = `
+                    <span>${i+1}</span>
+                    <input type="text" value="${row.name}" placeholder="Klub" style="width:80px">
+                    <input type="number" value="${row.pkt}" placeholder="Pkt" style="width:40px">
+                    <input type="text" value="${row.form.join('')}" placeholder="WWRPP" style="width:60px">
+                `;
+                list.appendChild(d);
+            });
+        });
+    }
 </script>
-
 </body>
 </html>
